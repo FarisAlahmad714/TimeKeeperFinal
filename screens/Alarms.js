@@ -16,6 +16,7 @@ const singleAlarmIcon = require('../images/single.png');
 const eventAlarmIcon = require('../images/event.png');
 
 const Alarms = () => {
+  // State variables and hooks (unchanged)
   const [alarms, setAlarms] = useState([]);
   const [isChoiceModalVisible, setIsChoiceModalVisible] = useState(false);
   const [isSingleAlarmModalVisible, setIsSingleAlarmModalVisible] = useState(false);
@@ -34,7 +35,7 @@ const Alarms = () => {
   const [wizardStep, setWizardStep] = useState(1);
   const [isNameValid, setIsNameValid] = useState(true);
   const [instanceRepeat, setInstanceRepeat] = useState('None');
-  const [selectedDays, setSelectedDays] = useState([]); // Add this line
+  const [selectedDays, setSelectedDays] = useState([]);
   const [date, setDate] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -46,8 +47,9 @@ const Alarms = () => {
     snooze: false,
   });
 
-  const [testRepeatInterval, setTestRepeatInterval] = useState('None'); // Add this line
+  const [testRepeatInterval, setTestRepeatInterval] = useState('None');
 
+  // All the function handlers (unchanged)
   const handleOpenSettings = (alarm) => {
     setSelectedAlarm(alarm);
     setSettings({
@@ -96,12 +98,12 @@ const Alarms = () => {
         const ringtoneValue = notification.request.content.sound;
         console.log('Notification received, sound:', ringtoneValue);
         if (ringtoneValue) {
-          await loadRingtone(ringtoneValue); // Load the ringtone based on the value
-          await playRingtone(); // Play the loaded ringtone
+          await loadRingtone(ringtoneValue);
+          await playRingtone();
         }
         return {
           shouldShowAlert: true,
-          shouldPlaySound: false, // Prevent the default sound from playing
+          shouldPlaySound: false,
           shouldSetBadge: false,
         };
       },
@@ -634,7 +636,7 @@ const Alarms = () => {
     <Dialog visible={visible} onDismiss={onClose}>
       <Dialog.Content>
         <Text style={styles.modalTitle}>Alarm Settings</Text>
-
+  
         <Text>Repeat</Text>
         <Picker
           selectedValue={repeat}
@@ -647,7 +649,7 @@ const Alarms = () => {
           <Picker.Item label="Every Hour" value="Hourly" />
           <Picker.Item label="Every Minute" value="Minutely" />
         </Picker>
-
+  
         <Text>Ringtone</Text>
         <Picker
           selectedValue={ringtone}
@@ -658,7 +660,7 @@ const Alarms = () => {
           <Picker.Item label="Ringtone 1" value="Ringtone1" />
           <Picker.Item label="Ringtone 2" value="Ringtone2" />
         </Picker>
-
+  
         <Text>Snooze</Text>
         <Switch
           value={snooze}
@@ -666,16 +668,13 @@ const Alarms = () => {
         />
       </Dialog.Content>
       <Dialog.Actions>
-        <Button onPress={onSave}>
-          <Text>Update</Text>
-        </Button>
-        <Button onPress={onClose}>
-          <Text>Close</Text>
-        </Button>
+        {/* Fix: Button components should have text as the child prop */}
+        <Button onPress={onSave}>Update</Button>
+        <Button onPress={onClose}>Close</Button>
       </Dialog.Actions>
     </Dialog>
   );
-
+  
   const renderSingleAlarm = (item) => (
     <Swipeable renderRightActions={(progress, dragX) => renderRightActions(progress, dragX, item)}>
       <Card style={styles.alarmItem}>
@@ -800,9 +799,8 @@ const Alarms = () => {
               value={alarmDescription}
               onChangeText={(text) => setAlarmDescription(text)}
             />
-            <Button onPress={() => setShowDatePicker(true)}>
-              <Text>Set Date</Text>
-            </Button>
+            {/* FIX: React Native Paper buttons should not have Text components as children */}
+            <Button onPress={() => setShowDatePicker(true)}>Set Date</Button>
             {showDatePicker && (
               <DateTimePicker
                 value={alarmDate}
@@ -811,9 +809,7 @@ const Alarms = () => {
                 onChange={onDateChange}
               />
             )}
-            <Button onPress={() => setShowTimePicker(true)}>
-              <Text>Set Time</Text>
-            </Button>
+            <Button onPress={() => setShowTimePicker(true)}>Set Time</Button>
             {showTimePicker && (
               <DateTimePicker
                 value={alarmTime}
@@ -836,12 +832,9 @@ const Alarms = () => {
             </Picker>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={addAlarm}>
-              <Text>Add Alarm</Text>
-            </Button>
-            <Button onPress={() => setIsSingleAlarmModalVisible(false)}>
-              <Text>Close</Text>
-            </Button>
+            {/* FIX: Use Button properly without nested Text */}
+            <Button onPress={addAlarm}>Add Alarm</Button>
+            <Button onPress={() => setIsSingleAlarmModalVisible(false)}>Close</Button>
           </Dialog.Actions>
         </Dialog>
 
@@ -930,21 +923,13 @@ const Alarms = () => {
           </Dialog.Content>
           <Dialog.Actions>
             {wizardStep < 3 && (
-              <Button onPress={handleNextStep}>
-                <Text>Next</Text>
-              </Button>
+              <Button onPress={handleNextStep}>Next</Button>
             )}
             {wizardStep === 3 && (
-              <Button onPress={addAlarm}>
-                <Text>Add Event Alarm</Text>
-              </Button>
+              <Button onPress={addAlarm}>Add Event Alarm</Button>
             )}
-            <Button onPress={handleRestart}>
-              <Text>Restart</Text>
-            </Button>
-            <Button onPress={() => setIsEventAlarmModalVisible(false)}>
-              <Text>Close</Text>
-            </Button>
+            <Button onPress={handleRestart}>Restart</Button>
+            <Button onPress={() => setIsEventAlarmModalVisible(false)}>Close</Button>
           </Dialog.Actions>
         </Dialog>
 
@@ -987,70 +972,6 @@ const Alarms = () => {
                     setAlarmTime(selectedTime);
                   }
                 }}
-              />
-            )}
-            <Text>Repeat Days</Text>
-            <DayPicker selectedDays={selectedDays} setSelectedDays={setSelectedDays} />
-            <Text>Test Repeat Interval</Text>
-            <Picker
-              selectedValue={testRepeatInterval}
-              onValueChange={(itemValue) => setTestRepeatInterval(itemValue)}
-              style={styles.picker}
-            >
-              <Picker.Item label="None" value="None" />
-              <Picker.Item label="Every 5 Seconds" value="Every5Seconds" />
-              <Picker.Item label="Every Minute" value="EveryMinute" />
-            </Picker>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => editAlarm(selectedEvent.id)}>Update Alarm</Button>
-            <Button onPress={() => setIsEditSingleAlarmModalVisible(false)}>Close</Button>
-          </Dialog.Actions>
-        </Dialog>
-
-        <Dialog visible={isEditInstanceModalVisible} onDismiss={() => setIsEditInstanceModalVisible(false)}>
-          <Dialog.Content>
-            <Paragraph>Edit Event Instance</Paragraph>
-            <Button onPress={() => setShowDatePicker(true)}>Set Date</Button>
-            {showDatePicker && (
-              <DateTimePicker
-                value={alarmDate}
-                mode="date"
-                display="default"
-                onChange={onDateChange}
-              />
-            )}
-            <Button onPress={() => setShowTimePicker(true)}>Set Time</Button>
-            {showTimePicker && (
-              <DateTimePicker
-                value={alarmTime}
-                mode="time"
-                display="default"
-                onChange={onTimeChange}
-              />
-            )}
-              <TextInput
-              style={styles.input}
-              label="Instance Description"
-              value={alarmDescription}
-              onChangeText={(text) => setAlarmDescription(text)}
-            />
-            <Button onPress={() => setShowDatePicker(true)}>Set Date</Button>
-            {showDatePicker && (
-              <DateTimePicker
-                value={alarmDate}
-                mode="date"
-                display="default"
-                onChange={onDateChange}
-              />
-            )}
-            <Button onPress={() => setShowTimePicker(true)}>Set Time</Button>
-            {showTimePicker && (
-              <DateTimePicker
-                value={alarmTime}
-                mode="time"
-                display="default"
-                onChange={onTimeChange}
               />
             )}
             <Text>Repeat Days</Text>
@@ -1276,7 +1197,11 @@ const styles = StyleSheet.create({
     color: 'red',
     marginBottom: 10,
   },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  }
 });
 
 export default Alarms;
-
